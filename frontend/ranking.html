@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMapper Better Business Rankings</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin: 0;
+        }
+        .sort-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+        .sort-btn {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        .sort-btn:hover {
+            background-color: #45a049;
+        }
+        .rankings-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .ranking-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: 350px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .business-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .ranking-indicator {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BizMapper</h1>
+    </header>
+
+    <div class="sort-container">
+        <button class="sort-btn" onclick="sortRankings('highestRated')">Highest Rated</button>
+        <button class="sort-btn" onclick="sortRankings('mostRelevant')">Most Relevant</button>
+    </div>
+
+    <div class="rankings-container" id="rankingsContainer"></div>
+
+    <script>
+        const businesses = [
+            { name: "Café Delight", rating: 4.9, recentReviews: 50 },
+            { name: "Pizza Palace", rating: 4.5, recentReviews: 30 },
+            { name: "Sushi World", rating: 4.8, recentReviews: 20 },
+            { name: "Burger Hub", rating: 4.2, recentReviews: 40 },
+            { name: "Spicy Tacos", rating: 4.6, recentReviews: 25 },
+            { name: "Study Café", rating: 4.7, recentReviews: 15 }
+        ];
+
+        function displayRankings(sortedBusinesses) {
+            const rankingsContainer = document.getElementById('rankingsContainer');
+            rankingsContainer.innerHTML = ''; // Clear previous results
+
+            sortedBusinesses.forEach((business, index) => {
+                const card = document.createElement('div');
+                card.className = 'ranking-card';
+                card.innerHTML = `
+                    <div class="ranking-indicator">#${index + 1}</div>
+                    <div class="business-name">${business.name}</div>
+                    <div class="rating">${business.rating} ★</div>
+                `;
+                rankingsContainer.appendChild(card);
+            });
+        }
+
+        function sortRankings(criteria) {
+            let sortedBusinesses;
+            if (criteria === 'highestRated') {
+                sortedBusinesses = [...businesses].sort((a, b) => b.rating - a.rating);
+            } else if (criteria === 'mostRelevant') {
+                // Example: sort by recent reviews for this case
+                sortedBusinesses = [...businesses].sort((a, b) => b.recentReviews - a.recentReviews);
+            }
+            displayRankings(sortedBusinesses);
+        }
+
+        // Initial display
+        sortRankings('highestRated');
+    </script>
+</body>
+</html>

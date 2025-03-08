@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMapper Review Summaries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f5;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        h1 {
+            margin: 0;
+        }
+        .review-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .review-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 10px;
+            padding: 15px;
+            width: 300px;
+            transition: transform 0.2s;
+        }
+        .review-card:hover {
+            transform: scale(1.02);
+        }
+        .business-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .rating {
+            color: #FFD700; /* Gold color for stars */
+            margin-bottom: 10px;
+        }
+        .summary {
+            font-size: 14px;
+            color: #555;
+        }
+        .sentiment {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BizMapper</h1>
+    </header>
+
+    <div class="review-container">
+        <!-- Review Card 1 -->
+        <div class="review-card">
+            <div class="business-name">Café Delight</div>
+            <div class="rating">★★★★☆</div>
+            <div class="summary">
+                "Great atmosphere and delicious pastries! Many vegan options available."
+            </div>
+            <div class="sentiment">Sentiment: Positive</div>
+        </div>
+
+        <!-- Review Card 2 -->
+        <div class="review-card">
+            <div class="business-name">Pizza Palace</div>
+            <div class="rating">★★★☆☆</div>
+            <div class="summary">
+                "Good pizza but a bit greasy. Service was slow on a busy night."
+            </div>
+            <div class="sentiment">Sentiment: Mixed</div>
+        </div>
+
+        <!-- Review Card 3 -->
+        <div class="review-card">
+            <div class="business-name">Sushi World</div>
+            <div class="rating">★★★★★</div>
+            <div class="summary">
+                "The freshest sushi I've ever had! Highly recommend the spicy tuna rolls."
+            </div>
+            <div class="sentiment">Sentiment: Positive</div>
+        </div>
+
+        <!-- Review Card 4 -->
+        <div class="review-card">
+            <div class="business-name">Burger Hub</div>
+            <div class="rating">★★☆☆☆</div>
+            <div class="summary">
+                "Overcooked burgers and long wait times. Would not recommend."
+            </div>
+            <div class="sentiment">Sentiment: Negative</div>
+        </div>
+    </div>
+</body>
+</html>

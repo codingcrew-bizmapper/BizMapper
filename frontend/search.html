@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMapper Smart Search</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin: 0;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px;
+        }
+        .search-input {
+            width: 400px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            margin-right: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        .search-input:focus {
+            border: 1px solid #4CAF50;
+            outline: none;
+        }
+        .search-btn {
+            padding: 15px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .search-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 20px;
+            width: 350px;
+            transition: transform 0.2s;
+        }
+        .result-card:hover {
+            transform: scale(1.05);
+        }
+        .business-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .summary {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BizMapper</h1>
+    </header>
 
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search reviews...">
+        <button class="search-btn" onclick="performSearch()">Search</button>
+    </div>
+
+    <div class="results-container" id="resultsContainer"></div>
+    
+    <script>
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            // Clear previous results
+            resultsContainer.innerHTML = '';
+
+            // Sample data representing review summaries
+            const businesses = [
+                { name: "Café Delight", summary: "Best café for studying with a cozy atmosphere and free Wi-Fi." },
+                { name: "Pizza Palace", summary: "Great pizza for casual dining and family gatherings." },
+                { name: "Sushi World", summary: "The freshest sushi and perfect for a special night out." },
+                { name: "Burger Hub", summary: "Famous for their juicy burgers and quick service." },
+                { name: "Spicy Tacos", summary: "Restaurants with the best spicy tacos and authentic flavors." },
+                { name: "Study Café", summary: "Quiet and relaxing environment perfect for studying." }
+            ];
+
+            // Filter results based on query
+            const filteredResults = businesses.filter(business => 
+                business.summary.toLowerCase().includes(query) || 
+                business.name.toLowerCase().includes(query)
+            );
+
+            // Display results
+            if (filteredResults.length > 0) {
+                filteredResults.forEach(business => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    card.innerHTML = `
+                        <div class="business-name">${business.name}</div>
+                        <div class="summary">${business.summary}</div>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+            } else {
+                resultsContainer.innerHTML = '<div class="no-results">No results found.</div>';
+            }
+
+            // Clear the search input
+            document.getElementById('searchInput').value = '';
+        }
+    </script>
+</body>
+</html>
