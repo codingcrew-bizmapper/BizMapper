@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ business.name }} - BizMapper</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Swiper.js CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f5;
+        }
+
+        /* Header Section */
+        
+        header {
+            background-color: #F5E9DC;
+            color: white;
+            padding: 0px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            max-height: 40px;  /* Adjust this value to fit the header */
+            margin-right: 10px;  /* Space between logo and business name */
+        }
+
+        .header-right {
+            color: #8B5E3C;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav a {
+            color: #8B5E3C;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+        #map {
+            flex: 1;
+            min-width: 200px;
+            height: 400px; /* Adjust as needed */
+            background-color: #e8a397;; /* Placeholder */
+        }
+        .business-details {
+            flex: 1;
+            text-align: center;
+            min-width: 300px;
+            padding: 20px;
+            background-color:#F5E9DC;
+        }
+        .business-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .business-header h2 {
+            flex: 1;
+            margin: 0;
+            font-size: 44px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        /* Grid Layout */
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            align-items: center;
+        }
+        
+        /* Review Box */
+        .review-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            height: 100px;  /* Fixed height for all boxes */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Truncate long text */
+        .review-text {
+            max-height: 100px; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Read More Button */
+        .read-more {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Popup Background */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;  /* Ensure popup appears above the map */
+        }
+
+        /* Popup Box */
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+            text-align: center;
+            position: relative;
+            z-index: 1001; /* Even higher to ensure text/buttons are clickable */
+        }
+
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .rating {
+            font-weight: bold;
+            color: #f39c12; /* Gold color for ratings */
+        }
+        .category-box {
+            display: inline-block;
+            background-color: rgb(205, 242, 205);
+            color: rgb(16, 15, 15);
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap; /* Prevents wrapping */
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .edit-btn:hover {
+            background-color: #1e471f;
+        }
+
+        .summarize-reviews {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .summarize-reviews:hover {
+            background-color: #1e471f;
+        }
+        .user-profile-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dropdown-icon {
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .user-profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+
+        /* Chatbot Icon (bottom-right corner) */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Chatbot Window */
+        .chatbot-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 500px;
+            height: 500px;
+            background-color: white;
+            border-radius: 10px;
+            display: none; /* Initially hidden */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header of the chatbot */
+        .chatbot-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Chatbot Messages Area */
+        .chatbot-messages {
+            padding: 10px;
+            flex: 1;
+            overflow-y: scroll;
+        }
+        /* Styling for the chatbot messages */
+        #chatbotMessages {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        /* User's message (green box) */
+        .chatbot-message.user {
+            background-color: #4CAF50; /* Green color */
+            color: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            max-width: 60%;
+            margin-left: auto;
+        }
+
+        /* AI's message (white box) */
+        .chatbot-message.bot {
+            background-color: white; /* White color */
+            color: black;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            max-width: 60%;
+            margin-right: auto;
+            border: 1px solid #ddd;
+        }
+
+        /* Chatbot Text Input Area */
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        /* Send Button */
+        .chat-send-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-send-btn:hover {
+            background-color: #1e471f;
+        }
+
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding-block: 0.1em; /* vertical padding, fits content better */
+            padding-inline: 1em;  /* horizontal padding */
+            text-align: center;
+        }
+
+        .fav-btn {
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
+        .fav-btn.favorited {
+            color: red;
+            transform: scale(1.2);
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo-container">
+            <img src="/static/images/logo.svg" alt="BizMapper Logo">
+            <!-- <h1>BizMapper</h1> -->
+        </div>
+        <div class="header-right">
+            <nav>
+                <a href="/">Home</a>
+                <a href="/#explore">Explore</a>
+                <a href="/#recommendations">Recommendations</a>
+                <a href="/#map">MapView</a>
+            </nav>
+            {% if session['user_logged_in'] %}
+                <!-- User Profile Dropdown -->
+                <div class="user-profile-dropdown">
+                    <!-- Clicking the profile circle takes the user to the profile page -->
+                    <div class="user-profile-circle" onclick="window.location.href='/profile'">
+                        {% if session.get('username') %}
+                            <span>{{ session.get('username')[0].upper() }}</span>
+                        {% else %}
+                            <span>?</span> <!-- Default icon if the username is not set -->
+                        {% endif %}
+                    </div>
+                    <!-- Small icon to trigger the dropdown -->
+                    <div class="dropdown-icon" onclick="toggleDropdown(event)">
+                        &#9662; <!-- Downward arrow -->
+                    </div>
+                    <div class="dropdown-content" id="userDropdown">
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Login / Sign Up Button -->
+                <button class="login-btn" onclick="window.location.href='/user'">
+                    Login / Sign Up
+                </button>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Business Details Section -->
+    <div class="business-details">
+        <div class="business-header">
+            <h2>{{ business.name }}</h2>
+            <button class="fav-btn" onclick="toggleFavorite()">❤️</button>
+        </div>
+        <p><strong>Address:</strong> {{ business.address }}</p>
+        <p><strong>Description:</strong> 
+            <span id="business-desc">{{ business.description }}</span>
+            {% if business.description == "No Description Available" %}
+                <button class="edit-btn" onclick="editDescription()">Generate Description</button>
+            {% endif %}
+        </p>
+        <p><strong>Category:</strong> 
+            {% if business.category %}
+                {% for cat in business.category %}
+                    <span class="category-box">{{ cat }}</span>
+                {% endfor %}
+            {% else %}
+                <span>No category available</span>
+            {% endif %}
+        </p>
+        <p><strong>Avg Rating:</strong> {{ business.avg_rating }}⭐</p>
+    </div>
+
+    <!-- Button for Summarizing Reviews -->
+    {% if business.text and business.rating %}
+        <button class="summarize-reviews" onclick="summarizeReviews()">Summarize Reviews</button>
+
+        <!-- Reviews Section -->
+        <div class="reviews-container">
+            {% for i in range(business.text|length) %}
+                <div class="review-box">
+                    <p class="rating">Rating: ⭐ {{ business.rating[i] }}</p>
+                    <p class="review-text">{{ business.text[i] }}</p>
+                    <button class="read-more" onclick="openPopup('{{ business.text[i]|replace("'", "\\'")|replace("\n", '\\n') }}', '{{ business.rating[i] }}')">
+                        Read More
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No reviews available.</p>
+    {% endif %}
+
+    <!-- Map Section at the end -->
+    <div id="map"></div>
+
+    <!-- Popup -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">X</button>
+            <p id="popup-text"></p>
+        </div>
+    </div>
+
+    <!-- Chatbot Icon -->
+    <div class="chatbot-icon" onclick="toggleChatWindow()">
+        <span>💬</span> <!-- You can use any emoji or icon here -->
+    </div>
+
+    <!-- Chatbot Window -->
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <span>Chat with Business!</span>
+            <button onclick="closeChatWindow()" class="close-btn">X</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <!-- Chat messages will go here -->
+        </div>
+        <textarea id="chatInput" placeholder="Type your message..." rows="3"></textarea>
+        <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+    </div>
+ 
+    <footer>
+        <p>&copy; 2025 BizMapper. All rights reserved.</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        function openPopup(reviewText, rating) {
+            document.getElementById("popup-text").innerHTML = `<strong>Rating: ⭐ ${rating}</strong><br><br>${reviewText}`;
+            document.getElementById("popup").style.display = "flex";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+        // Initialize the map with business coordinates
+        const map = L.map('map').setView([{{ business.latitude }}, {{ business.longitude }}], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker to the map for the business
+        L.marker([{{ business.latitude }}, {{ business.longitude }}]).addTo(map)
+            .bindPopup(`<strong>{{ business.name }}</strong><br>{{ business.address }}<br>Rating: {{ business.avg_rating }}`);
+
+        function editDescription() {
+            // Get the business name from the <h2> element
+            let businessName = document.querySelector('h2').innerText;  // Select the <h2> element for business name
+
+            // Make the API call to the server to generate the description
+            fetch(`/business/${encodeURIComponent(businessName)}/generate_description`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.description) {
+                    // Show the generated description in a pop-up (prompt)
+                    let generatedDescription = `
+                        <strong>AI Generated Description:</strong><br><br>
+                        <div style="text-align: justify;">
+                            ${data.description}
+                        </div>
+                    `;
+                    // Insert the generated description into the popup
+                    document.getElementById('popup-text').innerHTML = generatedDescription;
+                    // Show the popup
+                    document.getElementById('popup').style.display = "flex";
+                } else {
+                    alert("Error generating description. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error generating description:", error);
+                alert("There was an error connecting to the server. Please try again.");
+            });
+        }
+
+        function summarizeReviews() {
+            // Get the business name (Assuming there's an element with id 'business-name' holding the business name)
+            let businessName = document.querySelector('h2').innerText;
+
+            // Make the API call to the backend to summarize reviews
+            fetch(`/business/${encodeURIComponent(businessName)}/summarize_reviews`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.summary) {
+                    // Show the summarized reviews in a popup or alert box
+                    let summarizedText = `
+                        <div style="text-align: justify;">
+                            ${data.summary}
+                        </div>
+                    `;
+                    openPopupWithSummary(summarizedText);
+                } else {
+                    alert("Error summarizing reviews. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error summarizing reviews:", error);
+                alert("There was an error connecting to the server. Please try again.");
+            });
+        }
+
+        function openPopupWithSummary(summary) {
+            // Get the popup element
+            let popup = document.getElementById("popup");
+
+            // Get the popup text element to display the summary
+            let popupText = document.getElementById("popup-text");
+
+            // Insert the summary into the popup
+            popupText.innerHTML = `<strong>AI Generated Review Summary:</strong><br><br>${summary}`;
+
+            // Show the popup
+            popup.style.display = "flex";
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent click from closing the menu immediately
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-icon')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        // Toggle the visibility of the chatbot window
+        function toggleChatWindow() {
+            const chatbotWindow = document.getElementById("chatbotWindow");
+            chatbotWindow.style.display = chatbotWindow.style.display === "none" || chatbotWindow.style.display === "" ? "flex" : "none";
+        }
+
+        // Close the chatbot window
+        function closeChatWindow() {
+            document.getElementById("chatbotWindow").style.display = "none";
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            function sendMessage() {
+                // Get the chat input field value
+                let chatInputElement = document.getElementById('chatInput');
+
+                // Check if the element exists
+                if (chatInputElement) {
+                    let userMessage = chatInputElement.value;
+
+                    // Get the business name dynamically from the page
+                    let businessName = document.querySelector('.business-details h2').innerText;
+                    
+                    // Get the reviews text dynamically from the page
+                    let reviewsText = [];
+                    let reviewElements = document.querySelectorAll('.review-box .review-text');
+                    
+                    reviewElements.forEach(review => {
+                        reviewsText.push(review.innerText);  // Push all review texts into an array
+                    });
+
+                    // Display the user message in the chat (green box)
+                    const userMessageBox = document.createElement('div');
+                    userMessageBox.classList.add('chatbot-message', 'user');
+                    userMessageBox.innerHTML = `<p>${userMessage}</p>`;
+                    document.getElementById('chatbotMessages').appendChild(userMessageBox);
+
+                    // Make an API call to the backend with the dynamic URL
+                    fetch(`/business/${encodeURIComponent(businessName)}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_message: userMessage,
+                            reviews_text: reviewsText,  // Sending the collected reviews text to the backend
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Display the bot's response in the chat (white box)
+                        const botMessageBox = document.createElement('div');
+                        botMessageBox.classList.add('chatbot-message', 'bot');
+                        botMessageBox.innerHTML = `<p>${data.bot_response}</p>`;
+                        document.getElementById('chatbotMessages').appendChild(botMessageBox);
+
+                        // Optionally scroll to the bottom to show the latest message
+                        document.getElementById('chatbotMessages').scrollTop = document.getElementById('chatbotMessages').scrollHeight;
+                    })
+                    .catch(error => {
+                        console.error("Error during chat:", error);
+                    });
+
+                    // Clear the chat input after sending the message
+                    chatInputElement.value = '';
+                } else {
+                    console.error('Chat input element not found!');
+                }
+            }
+
+            // Listen for the Send button click
+            document.querySelector('.chat-send-btn').addEventListener('click', sendMessage);
+        });
+        function toggleFavorite() {
+            let favBtn = document.querySelector('.fav-btn');
+            let businessName = document.querySelector('.business-details h2').innerText;  // Get business name dynamically
+
+            fetch('/favorite-business', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ business_name: businessName })  // Sending name
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.favorited) {
+                    favBtn.classList.add('favorited');
+                    favBtn.innerHTML = "💖"; // Filled heart
+                } else {
+                    favBtn.classList.remove('favorited');
+                    favBtn.innerHTML = "❤️"; // Default heart
+                }
+            })
+            .catch(error => console.error("Error updating favorite status:", error));
+        }
+
+    </script>
+</body>
+</html>

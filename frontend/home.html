@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMapper Homepage</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome for heart icon -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F5E9DC;
+        }
+
+        /* Basic Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* Centers the modal */
+            width: 100%; /* Adjust width as needed */
+            max-width: 1500px; /* Optional max width */
+            background-color: rgba(0,0,0,0.4); /* Semi-transparent background */
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .modal-content {
+            background-color: rgb(248, 232, 225);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Modal button style */
+        .login-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #F5E9DC;
+            color: white;
+            padding: 0px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            max-height: 40px;  /* Adjust this value to fit the header */
+            margin-right: 10px;  /* Space between logo and business name */
+        }
+
+        .header-right {
+            color: #8B5E3C;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav a {
+            color: #8B5E3C;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        .user-profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .login-btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+
+        /* Hero Section with Automatic Slideshow */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        
+
+        .mySlides {
+            display: none;
+            width: 100%; /* Ensure it spans full width */
+            text-align: center;
+        }
+
+        .hero .mySlides img {
+            width: 100%; /* Makes all images fill the container */
+            height: 500px; /* Forces uniform height */
+            object-fit: cover; /* Ensures images fit properly */
+            display: block;
+        }
+
+
+        /* Caption text */
+        .text {
+            color: #f2f2f2;
+            font-size: 15px;
+            padding: 8px 12px;
+            position: absolute;
+            bottom: 8px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Number text (1/3 etc) */
+        .numbertext {
+            color: #f2f2f2;
+            font-size: 12px;
+            padding: 8px 12px;
+            position: absolute;
+            top: 0;
+        }
+
+        /* Fading animation */
+        .fade {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
+
+        .highlight-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .highlight-section h2 {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .highlight-section p {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .search-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-container input, .search-container select, .search-container button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: none;
+        }
+
+        .search-container input {
+            width: 500px;
+        }
+
+        .search-container button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .content-section {
+            padding: 40px;
+            background-color: #F5E9DC;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-top: 5%;
+        }
+
+
+        /* Container for business cards */
+        .business-cards-container {
+            padding-top: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center; /* Centers the cards horizontally */
+
+        }
+
+        /* Business card styles */
+        .business-card {
+            display: flex;
+            font-size: 16px;
+            text-align: left;
+            align-items: left;
+            width: 100%; /* Full width by default */
+            max-width: 350px; /* Maximum width for each card */
+            margin-bottom: 100px;
+            padding: 10px;
+            background-color: rgba(224, 122, 95, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .business-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .business-card div {
+            flex-grow: 1;
+        }
+
+        /* Media Query for Larger Screens */
+        @media (min-width: 768px) {
+            .business-card {
+                width: 48%; /* Two cards per row on tablet/medium screens */
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .business-card {
+                width: 30%; /* Three cards per row on larger screens */
+            }
+        }
+        /* Recommendations Section */
+        .recommended {
+            background: #F5E9DC;
+            padding: 30px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        /* Container for business cards */
+        .recommended .business-cards-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2px; /* Space between cards */
+            justify-content: center;
+        }
+
+        /* Individual business card */
+        .business-box {
+            width: 16%; /* Adjust width to fit 5 cards side by side */
+            background: #f0f0f0;
+            margin: 10px;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: left;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Image styling */
+        .business-box img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        /* Hover effect to slightly enlarge the card */
+        .business-box:hover {
+            transform: scale(1.05);
+        }
+
+        /* Heart Icon Styling */
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px; /* Size of the heart */
+            color: rgb(239, 95, 95); /* Heart color */
+            cursor: pointer;
+            z-index: 10; /* Ensure it stays above other elements */
+        }
+
+
+        /* Responsive layout */
+        @media (max-width: 1024px) {
+            .business-box {
+                width: 45%; /* Adjust for tablet screens, 2 cards per row */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .business-box {
+                width: 100%; /* Adjust for mobile screens, 1 card per row */
+            }
+        }
+
+        .logo {
+            width: 300px;  /* Adjust size */
+            height: auto;   /* Maintain aspect ratio */
+            display: block; /* Prevent extra spacing */
+            margin: 0 auto; /* Center horizontally */
+        }
+        /* Container for business cards */
+        .business-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Style each business card */
+        .business-card-explore {
+            display: block; /* Make the link behave like a block element */
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-decoration: none; /* Remove underline from link */
+            color: inherit; /* Inherit text color */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        }
+
+        /* Hover effect for the business card */
+        .business-card-explore:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Image styling */
+        .business-card-explore img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Content inside the business card */
+        .business-card-explore div {
+            margin-top: 15px;
+        }
+
+        .business-card-explore h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .business-card-explore p {
+            font-size: 14px;
+            color: #555;
+        }
+
+
+        /* Map Section */
+        #map {
+            z-index: 0;
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #map-heading {
+            text-align: center;
+            margin: 20px auto;
+        }
+
+
+        .user-profile-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-icon {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding-block: 0.1em; /* vertical padding, fits content better */
+            padding-inline: 1em;  /* horizontal padding */
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Modal for Login / Sign Up -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <img class="logo" src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo">
+            <h2>Login or Sign Up</h2>
+            <p>Please log in to continue or create an account!</p>
+            <button class="login-btn" onclick="window.location.href='/user'">Login / Sign Up</button>
+        </div>
+    </div>
+    <!-- Header Section -->
+    <header>
+        <div class="logo-container">
+            <img src="/static/images/logo.svg" alt="BizMapper Logo">
+            <!-- <h1>BizMapper</h1> -->
+        </div>
+        <div class="header-right">
+            <nav>
+                <a href="#hero">Home</a>
+                <a href="#explore">Explore</a>
+                <a href="#recommendations">Recommendations</a>
+                <a href="#map">MapView</a>
+            </nav>
+
+            </div>
+            {% if session['user_logged_in'] %}
+                <!-- User Profile Dropdown -->
+                <div class="user-profile-dropdown">
+                    <!-- Clicking the profile circle takes the user to the profile page -->
+                    <div class="user-profile-circle" onclick="window.location.href='/profile'">
+                        {% if session.get('username') %}
+                            <span>{{ session.get('username')[0].upper() }}</span>
+                        {% else %}
+                            <span>?</span> <!-- Default icon if the username is not set -->
+                        {% endif %}
+                    </div>
+                    <!-- Small icon to trigger the dropdown -->
+                    <div class="dropdown-icon" onclick="toggleDropdown(event)">
+                        &#9662; <!-- Downward arrow -->
+                    </div>
+                    <div class="dropdown-content" id="userDropdown">
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Login / Sign Up Button -->
+                <button class="login-btn" onclick="window.location.href='/user'">
+                    Login / Sign Up
+                </button>
+            {% endif %}
+
+        </div>
+    </header>
+    
+    <section id ="hero">
+        <!-- Hero Section with Automatic Slideshow -->
+        <div class="hero">
+            <!-- Slideshow Images -->
+            <div class="mySlides fade">
+                <img src="{{ url_for('static', filename='images/restaurant.jpg') }}" alt="Restaurant">
+            </div>
+            <div class="mySlides fade">
+                <img src="{{ url_for('static', filename='images/event.jpg') }}" alt="Event">
+            </div>
+            <div class="mySlides fade">
+                <img src="{{ url_for('static', filename='images/shop.jpg') }}" alt="Shop">
+            </div>
+            <div class="mySlides fade">
+                <img src="{{ url_for('static', filename='images/cafe.jpg') }}" alt="Cafe">
+            </div>
+            <div class="mySlides fade">
+                <img src="{{ url_for('static', filename='images/business.jpg') }}" alt="Business">
+            </div>
+        
+            <!-- Highlighted Text Section (Fixed Position Over Slideshow) -->
+            <div class="highlight-section">
+                <h2>Find Great Businesses Near You</h2>
+                <p>Discover restaurants, events, and more with real user reviews and ratings</p>
+                
+                <!-- Search Bar and Category Selection -->
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search businesses..." />
+                    <button onclick="searchBusiness()">Search</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+        
+
+    <!-- Restaurant, Events, Shops Section -->
+    <section id="explore">
+        <div class="content-section">
+            <h1>Explore Our Top Businesses</h1>
+            <!-- <h3>Restaurant | Event | Shop</h3> -->
+            <div class="business-cards-container">
+                <a href="{{ url_for('business_page', business_name='Restaurant') }}" class="business-card-explore">
+                    <img src="{{ url_for('static', filename='images/restaurant.jpg') }}" alt="Restaurant">
+                    <div>
+                        <h3>Restaurant</h3>
+                        <p>Fine dining with a variety of dishes from all over the world.</p>
+                    </div>
+                </a>
+                <a href="{{ url_for('business_page', business_name='Cafe') }}" class="business-card-explore">
+                    <img src="{{ url_for('static', filename='images/cafe.jpg') }}" alt="Event">
+                    <div>
+                        <h3>Cafe</h3>
+                        <p>Top Cafe spaces for hosting memorable gatherings.</p>
+                    </div>
+                </a>
+                <a href="{{ url_for('business_page', business_name='Shop') }}" class="business-card-explore">
+                    <img src="{{ url_for('static', filename='images/shop.jpg') }}" alt="Shop">
+                    <div>
+                        <h3>Shop</h3>
+                        <p>Shop for the latest trends in fashion and accessories.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+
+    
+
+    <!-- Recommendations Section -->
+    <section id="recommendations">
+        <div class="content-section recommended">
+            <h2>Recommended Businesses</h2>
+            <div class="business-cards-container" id="recommended-container">
+            </div>
+        </div>
+    </section> 
+    
+    <!-- Interactive Map Section -->
+    <h2 id = "map-heading">Explore Our Businesses on the Map</h2>
+    <section id="map">
+        <div class="content-section" id="map-section">
+            <div id="map"></div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 BizMapper. All rights reserved.</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        
+        // Initialize the map (we'll adjust the center dynamically later)
+        const map = L.map('map').setView([32.7767, -96.7970], 13); // Default to Dallas
+    
+        // Add a tile layer (you can change this to any tile provider you prefer)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        async function loadRecommendedBusinesses() {
+            try {
+                const response = await fetch('/recommended');
+                const businesses = await response.json();
+
+                const container = document.getElementById('recommended-container');
+                container.innerHTML = '';
+
+                businesses.forEach(biz => {
+                    const card = document.createElement('div');
+                    card.className = 'business-box';
+                    
+                    // Add click event to navigate to the business page
+                    card.onclick = function() {
+                        // Pass the business name, making sure it's properly encoded to handle special characters
+                        window.location.href = `/business/${encodeURIComponent(biz.name)}`;
+                    };
+
+                    card.innerHTML = `
+                        <img src="{{ url_for('static', filename='images/business.jpg') }}" alt=${biz.name}>
+                        <div>
+                            <h3>${biz.name}</h3>
+                            <p>${biz.description || 'Highly rated business in your area.'}</p>
+                            <p><strong>Rating:</strong> ${biz.avg_rating?.toFixed(1) || 'N/A'}</p>
+                            <p class="stars">${getStars(biz.avg_rating)}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Failed to load recommended businesses:', error);
+            }
+        }
+
+        loadRecommendedBusinesses();
+        function getStars(rating) {
+            if (!rating) return "N/A";
+            let starsHTML = "";
+            
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star" style="color: gold;"></i>'; // Full star
+                } else if (i - rating < 1) {
+                    starsHTML += '<i class="fas fa-star-half-alt" style="color: gold;"></i>'; // Half star
+                } else {
+                    starsHTML += '<i class="far fa-star" style="color: gold;"></i>'; // Empty star
+                }
+            }
+            
+            return starsHTML;
+        }
+
+        fetch('/mapdata')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(biz => {
+            if (biz.latitude && biz.longitude) {
+                const marker = L.marker([biz.latitude, biz.longitude]).addTo(map);
+                marker.bindPopup(`
+                <strong>${biz.name}</strong><br>
+                ${biz.address || 'No address'}<br>
+                ⭐ ${biz.avg_rating ?? 'N/A'}
+                `);
+            }
+            });
+        })
+        .catch(err => {
+            console.error("Error fetching map data:", err);
+        });
+
+        async function searchBusiness() {
+            const query = document.getElementById("search-input").value;
+
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            // Redirect to the results page with the query parameter
+            window.location.href = `/search?query=${encodeURIComponent(query)}`;
+        }
+
+        // Slideshow functionality
+        let slideIndex = 0;
+        showSlides();
+    
+        function showSlides() {
+            let slides = document.getElementsByClassName("mySlides");
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) {slideIndex = 1}    
+            slides[slideIndex-1].style.display = "block";  
+            setTimeout(showSlides, 3000); // Change image every 3 seconds
+        }
+
+        // Show the modal on page load if user is not logged in
+        window.onload = function() {
+            const loggedIn = {{ session.get('user_logged_in', False) | tojson }};  // Checks if user is logged in using Flask session
+            
+            if (!loggedIn) {
+                document.getElementById('loginModal').style.display = "block";
+            }
+        };
+
+        // Close the modal when the user clicks on 'X'
+        document.getElementById("closeModal").onclick = function() {
+            document.getElementById("loginModal").style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("loginModal")) {
+                document.getElementById("loginModal").style.display = "none";
+            }
+        };
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent click from closing the menu immediately
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-icon')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+    </script>
+    
+</body>
+</html>

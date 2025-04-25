@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #F5E9DC;
+            color: white;
+            padding: 0px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-right {
+            color: #8B5E3C;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav a {
+            color: #8B5E3C;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        .user-profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .login-btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+
+        /* Search Results Section */
+        .content-section {
+            flex: 1;
+        }
+
+        .content-section h1{
+            text-align: center;
+        }
+
+        /* Container for business cards */
+        .business-cards-container {
+            padding-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap */
+            gap: 25px;
+            justify-content: center; /* Center cards horizontally */
+            align-items: flex-start; /* Align cards to the top */
+            padding-bottom: 90px;
+        }
+
+        /* Business card styles */
+        .business-card {
+            width: 100%;
+            max-width: 350px; /* Max width to prevent oversized cards */
+            padding: 15px;
+            background-color: rgba(224, 122, 95, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .business-card:hover {
+            transform: scale(1.05); /* Slight hover effect */
+        }
+
+        .business-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f1010;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .rating {
+            font-size: 16px;
+            color: #f39c12;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .business-card {
+                width: 48%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .business-card {
+                width: 30%;
+            }
+        }
+        .user-profile-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dropdown-icon {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #F5E9DC;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding-block: 0.08em; /* vertical padding, fits content better */
+            padding-inline: 1em;  /* horizontal padding */
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            .business-card {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class = "wrapper">
+        <header>
+            <div class="logo-container">
+                <img src="/static/images/logo.svg" alt="BizMapper Logo">
+                <!-- <h1>BizMapper</h1> -->
+            </div>
+            <div class="header-right">
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="/#explore">Explore</a>
+                    <a href="/#recommendations">Recommendations</a>
+                    <a href="/#map">MapView</a>
+                </nav>
+                {% if session['user_logged_in'] %}
+                    <!-- User Profile Dropdown -->
+                    <div class="user-profile-dropdown">
+                        <!-- Clicking the profile circle takes the user to the profile page -->
+                        <div class="user-profile-circle" onclick="window.location.href='/profile'">
+                            {% if session.get('username') %}
+                                <span>{{ session.get('username')[0].upper() }}</span>
+                            {% else %}
+                                <span>?</span> <!-- Default icon if the username is not set -->
+                            {% endif %}
+                        </div>
+                        <!-- Small icon to trigger the dropdown -->
+                        <div class="dropdown-icon" onclick="toggleDropdown(event)">
+                            &#9662; <!-- Downward arrow -->
+                        </div>
+                        <div class="dropdown-content" id="userDropdown">
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Login / Sign Up Button -->
+                    <button class="login-btn" onclick="window.location.href='/user'">
+                        Login / Sign Up
+                    </button>
+                {% endif %}
+            </div>
+        </header>
+    
+        <div class="content-section">
+            <h1>Search Results for: {{ query }}</h1>
+            <div class="business-cards-container">
+                {% if results %}
+                    {% for result in results %}
+                        <a href="{{ url_for('business_page', business_name=result['name']|urlencode) }}" class="business-card">
+                            <div class="business-name">{{ result['name'] }}</div>
+                            <div class="description">
+                                {{ result['description'] if result['description'] != 'No Description Available' else 'Description not provided.' }}
+                            </div>
+                            <div class="rating">⭐ {{ result['avg_rating'] }}/5 ({{ result['num_of_reviews'] }} reviews)</div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p>No results found.</p>
+                {% endif %}
+            </div>
+        </div>
+        <footer style="text-align: center; padding: 20px; background: #333; color: white;">
+            &copy; 2025 BizMapper. All rights reserved.
+        </footer>
+    </div>
+    
+
+    <script>
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent click from closing the menu immediately
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-icon')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

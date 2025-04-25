@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Merriweather:900&family=Roboto:300,400,500,700,900&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/css/mdb.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/css/style.css">
+
+    <style>
+        /* Customizing all buttons to be green */
+        .btn-custom {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border-radius: 25px; /* Rounded corners */
+            padding: 12px 20px; /* Padding for the button */
+            border: none; /* Remove the border */
+            width: 100%; /* Full width for the button */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline from links */
+            display: inline-block; /* So that it behaves like a block element */
+        }
+
+        /* Hover effect for buttons and links */
+        .btn-custom:hover {
+            background-color: #45a049; /* Darker green when hovered */
+        }
+
+        /* Make links look like buttons */
+        .link-btn {
+            display: inline-block;
+            color: #4CAF50;
+            border-radius: 25px;
+            padding: 12px 20px;
+            text-decoration: none; /* Remove the default underline */
+            text-align: center;
+            width: auto; /* Allow the link to have auto width */
+        }
+
+        .link-btn:hover {
+            color: #2a572d; /* Darker green when hovered */
+        }
+
+        /* Ensure the image fits the page container without stretching */
+        .img-fluid {
+            width: 100%;  /* Full width of the container */
+            height: 130%;  /* Full height of the container */
+            object-fit: cover;  /* Maintain aspect ratio and cover the space */
+
+        }
+
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card-body px-lg-5 pt-0">
+                <h2 id="form-title" class="h1 my-5" style="font-weight: 800; font-family: sans-serif">Sign Up</h2>
+
+                <!-- Authentication Form -->
+                <form class="text-center" id="authForm" action="/signup" method="POST" enctype="multipart/form-data">
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 px-0">
+            <img src="{{ url_for('static', filename='images/shop.jpg') }}" 
+                alt="Business Image" class="img-fluid">
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/js/popper.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdbootstrap4-pro@1.1.0/js/mdb.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const authForm = document.getElementById("authForm");
+            const formTitle = document.getElementById("form-title");
+
+            function toggleForm(formType) {
+                if (formType === "login") {
+                    formTitle.innerText = "Sign In";
+                    authForm.action = "/login";
+                    authForm.innerHTML = `
+                        <div class="md-form my-5">
+                            <input type="text" id="loginUsername" name="username" class="form-control" required>
+                            <label for="loginUsername">Username</label>
+                        </div>
+                        <div class="md-form my-5">
+                            <input type="password" id="loginPassword" name="password" class="form-control" required>
+                            <label for="loginPassword">Password</label>
+                        </div>
+                        <button class="btn btn-custom" type="submit">
+                            Sign In
+                        </button>
+                        <hr>
+                        <p id="toggleText">New user? <a href="#" id="switchToSignup" class="link-btn">Create an account</a></p>
+                    `;
+                    document.getElementById("switchToSignup").addEventListener("click", function (event) {
+                        event.preventDefault();
+                        toggleForm("signup");
+                    });
+                } else {
+                    formTitle.innerText = "Sign Up";
+                    authForm.action = "/signup";
+                    authForm.innerHTML = `
+                        <div class="md-form my-5">
+                            <input type="text" id="signupUsername" name="username" class="form-control" required>
+                            <label for="signupUsername">Username</label>
+                        </div>
+                        <div class="md-form my-5">
+                            <input type="email" id="signupEmail" name="email" class="form-control" required>
+                            <label for="signupEmail">Email</label>
+                        </div>
+                        <div class="md-form my-5">
+                            <input type="password" id="signupPassword" name="password" class="form-control" required>
+                            <label for="signupPassword">Password</label>
+                        </div>
+                        <button class="btn btn-custom" type="submit">Sign Up</button>
+                        <hr>
+                        <p id="toggleText">Already have an account? <a href="#" id="switchToLogin" class="link-btn">Sign in</a></p>
+                    `;
+                    document.getElementById("switchToLogin").addEventListener("click", function (event) {
+                        event.preventDefault();
+                        toggleForm("login");
+                    });
+                }
+            }
+
+            toggleForm("signup");
+        });
+    </script>
+</body>
+</html>

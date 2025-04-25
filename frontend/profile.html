@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - BizMapper</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #F5E9DC;
+            color: white;
+            padding: 0px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            max-height: 40px;  /* Adjust this value to fit the header */
+            margin-right: 10px;  /* Space between logo and business name */
+        }
+
+        .header-right {
+            color: #8B5E3C;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav a {
+            color: #8B5E3C;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        .user-profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .login-btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .profile-container {
+            display: flex;
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            align-items: center;
+        }
+
+        .profile-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 30px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: #fff;
+            position: relative;
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        .change-picture-btn {
+            margin-top: 35px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .profile-right {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333;
+            transition: border 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .save-btn-container {
+            text-align: left;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .save-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #418944;
+        }
+
+        @media (max-width: 600px) {
+            .profile-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-left {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .save-btn-container {
+                text-align: center;
+            }
+        }
+
+
+        .favorites-section {
+            padding: 60px 20px;
+            background-color: #f9f3f0;
+            text-align: center;
+        }
+
+        .favorites-section h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #8B5E3C;
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .business-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .business-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .business-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .card-content h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-content p {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .heart-icon {
+            font-size: 20px;
+            color: #E91E63;
+            cursor: pointer;
+        }
+
+        
+        .user-profile-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dropdown-icon {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+        .heart-icon {
+            cursor: pointer;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .heart-icon:hover {
+            color: red;
+        }
+        .profile-picture img {
+            width: 150px;  /* Adjust as needed */
+            height: 150px;
+            border-radius: 50%; /* Makes it circular */
+            object-fit: cover; /* Ensures it doesn’t stretch */
+            border: 2px solid #ddd; /* Optional: adds a border */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding-block: 0.5em; /* vertical padding, fits content better */
+            padding-inline: 1em;  /* horizontal padding */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/static/images/logo.svg" alt="BizMapper Logo">
+            <!-- <h1>BizMapper</h1> -->
+        </div>
+        <div class="header-right">
+            <nav>
+                <a href="/">Home</a>
+                <a href="/#explore">Explore</a>
+                <a href="/#recommendations">Recommendations</a>
+                <a href="/#map">MapView</a>
+            </nav>
+            {% if session['user_logged_in'] %}
+                <!-- User Profile Dropdown -->
+                <div class="user-profile-dropdown">
+                    <!-- Clicking the profile circle takes the user to the profile page -->
+                    <div class="user-profile-circle" onclick="window.location.href='/profile'">
+                        {% if session.get('username') %}
+                            <span>{{ session.get('username')[0].upper() }}</span>
+                        {% else %}
+                            <span>?</span> <!-- Default icon if the username is not set -->
+                        {% endif %}
+                    </div>
+                    <!-- Small icon to trigger the dropdown -->
+                    <div class="dropdown-icon" onclick="toggleDropdown(event)">
+                        &#9662; <!-- Downward arrow -->
+                    </div>
+                    <div class="dropdown-content" id="userDropdown">
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Login / Sign Up Button -->
+                <button class="login-btn" onclick="window.location.href='/user'">
+                    Login / Sign Up
+                </button>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-left">
+                <div class="profile-picture">
+                    <img id="profile-img" src="{{ user.profile_picture if user.profile_picture else 'static/default.jpg' }}" alt="Profile Picture">
+                    <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
+                    <span class="edit-icon" onclick="document.getElementById('profile-picture-input').click();">✏️</span>
+                </div>
+                <button class="change-picture-btn" onclick="uploadProfilePicture()">Change Profile Picture</button>            
+            </div>
+            <div class="profile-right">
+                <div class="form-group">
+                    <label for="first-name">Username</label>
+                    <input type="text" id="first-name" placeholder="First Name" value="{{ user.username }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Email" value="{{ user.email }}">
+                </div>
+                <div class="save-btn-container">
+                    <button class="save-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    
+        <section class="favorites-section">
+            <h2>My Favorites 💖</h2>
+            <div class="favorites-grid">
+                {% for business in favorites %}
+                <a href="{{ url_for('business_page', business_name=business) }}" class="business-card">
+                    <img src="{{ url_for('static', filename='images/business.jpg') }}" alt="{{ business }}">
+                    <div class="card-content">
+                        <h3>{{ business }}</h3>
+                        <p>Some description about {{ business }}.</p>
+                        <span class="heart-icon" id="{{ business }}" onclick="toggleFavorite('{{ business }}')">💖</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        
+    </main>
+    
+
+    <footer>
+        &copy; 2025 BizMapper. All rights reserved.
+    </footer>
+    <script>
+        document.getElementById("profile-picture-input").addEventListener("change", function() {
+            uploadProfilePicture();
+        });
+
+        function uploadProfilePicture() {
+            let fileInput = document.getElementById("profile-picture-input");
+            let file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an image file.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("profile_picture", file);
+
+            fetch("/upload_profile_picture", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    document.getElementById("profile-img").src = data.image_url; // Update profile picture
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent click from closing the menu immediately
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-icon')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function toggleFavorite(businessName) {
+            const heartIcon = document.getElementById(businessName);  // Get the heart icon for this business
+            const currentHeart = heartIcon.innerHTML;
+
+            if (currentHeart === "❤️") {
+                // Add to favorites
+                heartIcon.innerHTML = "💖";
+
+                // Update session favorites (send request to server to update it)
+                fetch("/add_to_favorites", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ business_name: businessName })
+                });
+            } else {
+                // Remove from favorites
+                heartIcon.innerHTML = "❤️";
+
+                // Send request to server to remove it from favorites
+                fetch("/remove_from_favorites", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ business_name: businessName })
+                });
+            }
+        }
+
+    </script>
+</body>
+</html>
