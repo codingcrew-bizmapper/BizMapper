@@ -29,7 +29,7 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # MongoDB URI setup
-app.config["MONGO_URI"] = "mongodb+srv://niharika:Niharika123@bizmapper.ncnczty.mongodb.net/mydatabase"
+# app.config["MONGO_URI"] = "place the original mongo uri here"
 mongo = PyMongo(app)
 
 # Register a custom Jinja filter for URL encoding
